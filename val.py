@@ -12,16 +12,12 @@ import os
 import copy
 import pandas as pd
 from PIL import Image
+import sys
+
 
 class MyCNN(torch.nn.Module):
     def __init__(self):
         super(MyCNN, self).__init__()
-        '''
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3)
-        self.conv2 = nn.Conv2d(in_channels=32, out_channels=32, kernel_size=2)
-        self.pool1 = nn.MaxPool2d(kernel_size=2)
-        self.conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=2)
-        self.dropout1 = nn.Dropout(0.5)'''
         
         #self.fc1 = nn.LazyLinear(out_features=128)
         self.fc1 = nn.Linear(in_features=2*33, out_features=128)
@@ -33,15 +29,6 @@ class MyCNN(torch.nn.Module):
         self.fc4 = nn.Linear(in_features=64, out_features=3)
     
     def forward(self, x):
-        '''
-        x = nn.ReLU()(self.conv1(x))
-        x = nn.ReLU()(self.conv2(x))
-        x = self.pool1(x)
-        x = nn.ReLU()(self.conv3(x))
-        x = self.dropout1(x)
-        
-        x = x.view(x.size(0), -1)
-        '''
         x = nn.ReLU()(self.fc1(x))
         x = self.dropout1(x)
         x = self.fc2(x)
@@ -61,8 +48,9 @@ inputs = torch.tensor(inputs)
 labels = df['label'].tolist()
 #print(labels)
 
+args = sys.argv
 # Load model
-loaded_model = torch.load('best_model.h5', map_location=torch.device('cpu')) # for cpu
+loaded_model = torch.load(args[1], map_location=torch.device('cpu')) # for cpu
 
 
 for i in range(len(labels)):

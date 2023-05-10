@@ -12,44 +12,29 @@ import os
 import copy
 import pandas as pd
 from PIL import Image
+import sys
 
 
-batch_size = 16
+batch_size = 12
 vali_split = 0.8
-learning_rate = 0.0001
+learning_rate = 0.00002
 epochs = 25
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+args = sys.argv
 
 class MyCNN(torch.nn.Module):
     def __init__(self):
         super(MyCNN, self).__init__()
-        '''
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3)
-        self.conv2 = nn.Conv2d(in_channels=32, out_channels=32, kernel_size=2)
-        self.pool1 = nn.MaxPool2d(kernel_size=2)
-        self.conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=2)
-        self.dropout1 = nn.Dropout(0.5)'''
-        
-        #self.fc1 = nn.LazyLinear(out_features=128)
-        self.fc1 = nn.Linear(in_features=2*33, out_features=128)
+        self.fc1 = nn.Linear(in_features=2*33, out_features=2048)
         self.dropout1 = nn.Dropout(0.5)
-        self.fc2 = nn.Linear(in_features=128, out_features=256)
+        self.fc2 = nn.Linear(in_features=2048, out_features=256)
         self.dropout2 = nn.Dropout(0.5)
         self.fc3 = nn.Linear(in_features=256, out_features=64)
         self.dropout3 = nn.Dropout(0.5)
-        self.fc4 = nn.Linear(in_features=64, out_features=3)
+        self.fc4 = nn.Linear(in_features=64, out_features=4)
     
     def forward(self, x):
-        '''
-        x = nn.ReLU()(self.conv1(x))
-        x = nn.ReLU()(self.conv2(x))
-        x = self.pool1(x)
-        x = nn.ReLU()(self.conv3(x))
-        x = self.dropout1(x)
-        
-        x = x.view(x.size(0), -1)
-        '''
-        x = nn.ReLU()(self.fc1(x))
+        x = self.fc1(x)
         x = self.dropout1(x)
         x = self.fc2(x)
         x = self.dropout2(x)
@@ -88,7 +73,7 @@ class my_dataset(Dataset):
     def __len__(self):
         return len(self.data_paths)
     
-dataset = my_dataset("data/main.csv",transform =None)
+dataset = my_dataset("data/"+args[1],transform =None)
 
 train_size = (int) (len(dataset) * vali_split)
 val_size = len(dataset) - train_size
@@ -99,9 +84,7 @@ train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size,
 val_loader   = torch.utils.data.DataLoader(dataset_val,   batch_size=batch_size, shuffle=False)
 dataloaders = {'train': train_loader, 'val': val_loader}
 
-for inputs,labels  in train_loader:
-        print('label:',labels)
-        print('data.shape:',inputs.shape)
+
 
 
 
@@ -183,9 +166,11 @@ optimizer_ft = torch.optim.Adam(model.parameters(), lr=learning_rate, eps=1e-9)
 best_model = train_model(model, criterion, optimizer_ft, num_epochs=epochs)
 
 # Save the model
-torch.save(model, 'best_model.h5')
+torch.save(model, args[2])
 
+#python model.py 'csvname' 'modelname'
 
+'''
 print('-' *10)
 print('Validation')
 
@@ -202,7 +187,7 @@ print(val_data)
 print(val_data.shape)
 
 # Load model
-loaded_model = torch.load('best_model.h5', map_location=torch.device('cpu')) # for cpu
+loaded_model = torch.load('hockey_model.h5', map_location=torch.device('cpu')) # for cpu
 
 # Predict
 softmax = torch.nn.Softmax(dim=-1)
@@ -217,4 +202,4 @@ if torch.argmax(output)==0:
 elif torch.argmax(output)==1:
   print('\nThis is a hands-up.')
 elif torch.argmax(output)==2:
-  print('\nThis is a down.')
+  print('\nThis is a down.')'''

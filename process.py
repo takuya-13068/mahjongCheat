@@ -25,5 +25,7 @@ def save_frame_range(video_path, start_frame, stop_frame, step_frame,
 
 #stand, hand, downを選択する
 args = sys.argv
-save_frame_range('data/video/val0.mp4', 100, 3000, 10, 'data/'+args[1], 'img')
-#python process.py (stand/hand/down)
+save_frame_range('data/video/'+args[1], 0, 3000, 10, 'data/'+args[2], args[3])
+#300sec 
+#python process.py (Videofilename) (foldername) (filename)
+# ex) python process.py hand.mp4 hand img1

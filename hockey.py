@@ -110,8 +110,11 @@ while True:
             p1text += 'hand'
             poseOutput['p1'] = 1
         elif torch.argmax(output)== 2:
-            p1text += 'down'
+            p1text += 'left'
             poseOutput['p1'] = 2
+        elif torch.argmax(output)== 3:
+            p1text += 'right'
+            poseOutput['p1'] = 3
         else :
             p1text += 'ERROR!!!!!!!!!!!'
             poseOutput['p1'] = -2
@@ -136,8 +139,11 @@ while True:
             p2text += 'hand'
             poseOutput['p2'] = 1
         elif torch.argmax(output)== 2:
-            p2text += 'down'
+            p2text += 'left'
             poseOutput['p2'] = 2
+        elif torch.argmax(output)== 3:
+            p2text += 'right'
+            poseOutput['p2'] = 3
         else :
             p2text += 'ERROR!!!!!!!!!!!'
             poseOutput['p2'] = -2
@@ -156,7 +162,7 @@ while True:
     cv2.putText(img, str(int(fps)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 3, (255, 0, 0), 3)
 
     #socket connection (to unity)
-    # -2: error, -1:not found, 0:stand, 1:hand-up, 2:down
+    # -2: error, -1:not found, 0:stand, 1:hand-up, 2:left, 3:right
     result = [poseOutput['p1'], poseOutput['p2']]
     result = " ".join(map(str, result))
     client.sendto(result.encode('utf-8'),(HOST,PORT))

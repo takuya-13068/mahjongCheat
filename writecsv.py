@@ -45,9 +45,9 @@ for i in range(len(input_list)):
         for id, lm in enumerate(results.pose_landmarks.landmark):
             h, w, c = img.shape
             #print(id, lm)
-            cx, cy = int(lm.x * w), int(lm.y * h)
+            cx, cy, cz = int(lm.x * w), int(lm.y * h), int(lm.z * 100)
             #cv2.circle(img, (cx, cy), 4, (255, 0, 0), cv2.FILLED)
-            #print(cx, cy)
+            #print(cx, cy, cz)
             if not(lm.visibility > 0.1 and cx > 0 and cx < 1080 and cy > 0 and cy < 1920):
                 print("ERROR! file:"+file_name+" is not fully recognized")
                 err = True
@@ -55,12 +55,20 @@ for i in range(len(input_list)):
             poseData += [cx,cy]
         poseData = " ".join(map(str,poseData))
         if not err:
-            # stand:0 hand:1, down:2
             if args[1] == 'stand':
-                editCSV('data/main.csv', file_name, poseData, 0)
+                editCSV('data/'+args[2], file_name, poseData, 0)
             elif args[1] == 'hand':
-                editCSV('data/main.csv', file_name, poseData, 1)
+                editCSV('data/'+args[2], file_name, poseData, 1)
+            elif args[1] == 'left':
+                editCSV('data/'+args[2], file_name, poseData, 2)
+            elif args[1] == 'right':
+                editCSV('data/'+args[2], file_name, poseData, 3)
+            ''''
             elif args[1] == 'down':
-                editCSV('data/main.csv', file_name, poseData, 2)
+                editCSV('data/'+args[2], file_name, poseData, 2)
             elif args[1] == 'val':
-                editCSV('data/val.csv', file_name, poseData, 100)
+                editCSV('data/'+args[2], file_name, poseData, 100)
+            '''
+
+#python writecsv.py 'labelname' 'csvname'
+#ex) python writecsv.py left main.csv
